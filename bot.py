@@ -70,12 +70,14 @@ def get_lat_lon(city):
 def get_temperature(city):
     api_key = '2bbf71791159863c390f044fa06313b0'
     coords, error = get_lat_lon(city)
-    if error:
+    
+    if coords is None:
         logging.warning(f"Используется дефолтное значение температуры. Ошибка: {error}")
-        return 20  
+        return 20 
 
     lat, lon = coords
     url = f'http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}&units=metric'
+    
     try:
         response = requests.get(url)
         response.raise_for_status()
@@ -83,7 +85,8 @@ def get_temperature(city):
         return data['main']['temp']
     except Exception as e:
         logging.error(f"Ошибка при получении температуры: {e}")
-        return 20  
+        return 20 
+  
 
 '''
 Хендлеры
