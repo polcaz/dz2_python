@@ -46,7 +46,7 @@ def calorie_level(weight, height, age, activity):
     base_calorie = 10 * weight + 6.25 * height - 5 * age + 5
     activity_calorie = (activity // 30) * 100
     return base_calorie + activity_calorie
-
+    
 # Получение координат города
 def get_lat_lon(city):
     api_key = '2bbf71791159863c390f044fa06313b0'
@@ -56,13 +56,21 @@ def get_lat_lon(city):
         response = requests.get(url)
         response.raise_for_status()
         data = response.json()
-        if data:
-            lat = data[0]['lat']
-            lon = data[0]['lon']
-            return (lat, lon)
-        else:
+
+        if not data:  
+            logging.error(f"Город '{city}' не найден")
             return None, "Город не найден"
-    except Exception as e:
+
+        lat = data[0].get('lat')
+        lon = data[0].get('lon')
+
+        if lat is None or lon is None: 
+            logging.error(f"Координаты для '{city}' не найдены в API")
+            return None, "Ошибка получения координат"
+
+        return lat, lon, None
+
+    except requests.RequestException as e:
         logging.error(f"Ошибка при получении координат: {e}")
         return None, str(e)
 
@@ -70,14 +78,14 @@ def get_lat_lon(city):
 def get_temperature(city):
     api_key = '2bbf71791159863c390f044fa06313b0'
     coords, error = get_lat_lon(city)
-    
-    if coords is None:
-        logging.warning(f"Используется дефолтное значение температуры. Ошибка: {error}")
-        return 20 
 
-    lat, lon = coords
+    if coords is None:  
+        logging.warning(f"Используется дефолтное значение температуры. Ошибка: {error}")
+        return 20  
+
+    lat, lon = coords  
     url = f'http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}&units=metric'
-    
+
     try:
         response = requests.get(url)
         response.raise_for_status()
