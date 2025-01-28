@@ -56,18 +56,18 @@ def get_lat_lon(city):
         response.raise_for_status()
         data = response.json()
 
-        if not data:  # Если список пустой
+        if not data:  
             logging.error(f"Город '{city}' не найден")
             return None, "Город не найден"
 
         lat = data[0].get('lat')
         lon = data[0].get('lon')
 
-        if lat is None or lon is None:  # Если API вернул некорректные данные
+        if lat is None or lon is None:  
             logging.error(f"Координаты для '{city}' не найдены в API")
             return None, "Ошибка получения координат"
 
-        return lat, lon  # ✅ Корректный кортеж (lat, lon)
+        return lat, lon 
 
     except requests.RequestException as e:
         logging.error(f"Ошибка при получении координат: {e}")
