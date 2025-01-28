@@ -2,7 +2,7 @@ import asyncio
 import logging
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters.command import Command
-# from config import TOKEN
+from config import TOKEN
 import requests
 from aiogram.types import Update
 from aiogram.dispatcher.middlewares.base import BaseMiddleware
@@ -11,7 +11,7 @@ import logging
 # Включаем логирование, чтобы не пропустить важные сообщения
 logging.basicConfig(level=logging.INFO)
 
-bot = Bot(token=BOT_TOKEN)
+bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
 # Подключаем middleware
