@@ -23,6 +23,11 @@
 
 /log_food
 
+<img width="556" alt="image" src="https://github.com/user-attachments/assets/d57ac50f-5442-4409-9a03-8b90bcf20d6f" />
+
+/check_progress
+
+<img width="551" alt="image" src="https://github.com/user-attachments/assets/2a2c040f-1736-49b4-8fbf-0d0c32e5d025" />
 
 
 
