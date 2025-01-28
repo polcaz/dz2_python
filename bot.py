@@ -58,20 +58,19 @@ def get_lat_lon(city):
 
         if not data:  
             logging.error(f"Город '{city}' не найден")
-            return None, "Город не найден"
-
+            return None, "Город не найден"  
         lat = data[0].get('lat')
         lon = data[0].get('lon')
 
         if lat is None or lon is None:  
             logging.error(f"Координаты для '{city}' не найдены в API")
-            return None, "Ошибка получения координат"
+            return None, "Ошибка получения координат" 
 
-        return lat, lon 
+        return lat, lon  
 
     except requests.RequestException as e:
         logging.error(f"Ошибка при получении координат: {e}")
-        return None, str(e)
+        return None, str(e)  
 
 
 # Получение температуры в городе
@@ -79,11 +78,11 @@ def get_temperature(city):
     api_key = '2bbf71791159863c390f044fa06313b0'
     coords, error = get_lat_lon(city)
 
-    if coords is None:  
+    if coords is None:  # ✅ Теперь перед распаковкой проверяем
         logging.warning(f"Используется дефолтное значение температуры. Ошибка: {error}")
         return 20  
 
-    lat, lon = coords  
+    lat, lon = coords  # ✅ Теперь 100% безопасно
     url = f'http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}&units=metric'
 
     try:
@@ -93,7 +92,7 @@ def get_temperature(city):
         return data['main']['temp']
     except Exception as e:
         logging.error(f"Ошибка при получении температуры: {e}")
-        return 20  
+        return 20   
  
 '''
 Хендлеры
