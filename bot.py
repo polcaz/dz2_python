@@ -70,19 +70,19 @@ def get_lat_lon(city):
 
     except requests.RequestException as e:
         logging.error(f"Ошибка при получении координат: {e}")
-        return None, str(e)  
+        return None  
 
 
 # Получение температуры в городе
 def get_temperature(city):
     api_key = '2bbf71791159863c390f044fa06313b0'
-    coords, error = get_lat_lon(city)
+    coords = get_lat_lon(city)
 
-    if coords is None:  # ✅ Теперь перед распаковкой проверяем
-        logging.warning(f"Используется дефолтное значение температуры. Ошибка: {error}")
+    if coords is None:  
+        logging.warning(f"Возникла ошибка. Используется дефолтное значение температуры.")
         return 20  
 
-    lat, lon = coords  # ✅ Теперь 100% безопасно
+    lat, lon = coords  
     url = f'http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}&units=metric'
 
     try:
