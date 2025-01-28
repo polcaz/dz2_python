@@ -299,7 +299,7 @@ async def unified_handler(message: types.Message):
                 users[chat_id]['step'] = 'activity'
             elif step == 'activity':
                 users[chat_id]['activity'] = int(text)
-                await message.reply("В каком городе вы находитесь?")
+                await message.reply("В каком городе вы находитесь? (на английском)")
                 users[chat_id]['step'] = 'city'
             elif step == 'city':
                 users[chat_id]['city'] = text
