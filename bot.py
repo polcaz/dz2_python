@@ -282,47 +282,51 @@ async def unified_handler(message: types.Message):
         return
     
     # Проверяем, находится ли пользователь на шаге заполнения профиля
-    if chat_id in users and 'step' in users[chat_id]:
-        step = users[chat_id]['step']
-        text = message.text
+if chat_id in users and 'step' in users[chat_id]:
+    step = users[chat_id]['step']
+    text = message.text.strip()
 
+    if step in ['weight', 'height', 'age', 'activity']:  # Только для числовых значений
         try:
-            if step == 'weight':
-                users[chat_id]['weight'] = int(text)
-                await message.reply("Введите ваш рост (в см):")
-                users[chat_id]['step'] = 'height'
-            elif step == 'height':
-                users[chat_id]['height'] = int(text)
-                await message.reply("Введите ваш возраст:")
-                users[chat_id]['step'] = 'age'
-            elif step == 'age':
-                users[chat_id]['age'] = int(text)
-                await message.reply("Сколько минут активности у вас в день?")
-                users[chat_id]['step'] = 'activity'
-            elif step == 'activity':
-                users[chat_id]['activity'] = int(text)
-                await message.reply("В каком городе вы находитесь?")
-                users[chat_id]['step'] = 'city'
-            elif step == 'city':
-                users[chat_id]['city'] = text
+            users[chat_id][step] = int(text)
+        except ValueError:
+            await message.reply("Пожалуйста, вводите только числа!")
+            return
 
-                temperature = get_temperature(text)
-                weight = users[chat_id]['weight']
-                activity = users[chat_id]['activity']
-                users[chat_id]['water_goal'] = water_level(weight, activity, temperature)
-                height = users[chat_id]['height']
-                age = users[chat_id]['age']
-                users[chat_id]['calorie_goal'] = calorie_level(weight, height, age, activity)
+        if step == 'weight':
+            await message.reply("Введите ваш рост (в см):")
+            users[chat_id]['step'] = 'height'
+        elif step == 'height':
+            await message.reply("Введите ваш возраст:")
+            users[chat_id]['step'] = 'age'
+        elif step == 'age':
+            await message.reply("Сколько минут активности у вас в день?")
+            users[chat_id]['step'] = 'activity'
+        elif step == 'activity':
+            await message.reply("В каком городе вы находитесь?")
+            users[chat_id]['step'] = 'city'
 
-                users[chat_id]['logged_water'] = 0
-                users[chat_id]['logged_calories'] = 0
-                users[chat_id]['burned_calories'] = 0
+    elif step == 'city':  # Теперь обработка города не падает в except
+        users[chat_id]['city'] = text
 
-                await message.reply(
-                    f"Профиль настроен! Ваша дневная норма воды: {users[chat_id]['water_goal']} мл, "
-                    f"калорий: {users[chat_id]['calorie_goal']} ккал."
-                )
-                del users[chat_id]['step']
+        temperature = get_temperature(text)
+        weight = users[chat_id]['weight']
+        activity = users[chat_id]['activity']
+        height = users[chat_id]['height']
+        age = users[chat_id]['age']
+
+        users[chat_id]['water_goal'] = water_level(weight, activity, temperature)
+        users[chat_id]['calorie_goal'] = calorie_level(weight, height, age, activity)
+        users[chat_id]['logged_water'] = 0
+        users[chat_id]['logged_calories'] = 0
+        users[chat_id]['burned_calories'] = 0
+
+        await message.reply(
+            f"Профиль настроен! Ваша дневная норма воды: {users[chat_id]['water_goal']} мл, "
+            f"калорий: {users[chat_id]['calorie_goal']} ккал."
+        )
+        del users[chat_id]['step']
+
         except ValueError:
             await message.reply("Пожалуйста, вводите только числа!")
         return
